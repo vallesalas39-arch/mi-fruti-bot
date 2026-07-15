@@ -1,32 +1,71 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>FrutiApp</title>
+    <meta charset="UTF-8">
+    <title>FrutiApp - Ranking Oro</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://sad.adsgram.ai/js/adsgram.min.js"></script>
     <style>
-        body { text-align: center; font-family: sans-serif; }
+        body { text-align: center; font-family: 'Arial', sans-serif; background: #fff0f5; padding: 20px; }
+        .card { background: white; padding: 25px; border-radius: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
         h1 { color: #ff6b6b; }
-        button { padding: 15px; font-size: 16px; background-color: #ff6b6b; color: white; border: none; border-radius: 10px; }
+        .puntos-box { font-size: 28px; font-weight: bold; color: #ff8c00; margin: 15px 0; }
+        button { padding: 12px 20px; font-size: 16px; background-color: #ff6b6b; color: white; border: none; border-radius: 50px; cursor: pointer; margin: 5px; width: 85%; }
+        .btn-saldo { background-color: #ffa500; font-weight: bold; }
+        .ranking { font-size: 16px; color: #555; margin-top: 15px; font-style: italic; }
+        .oro { color: #d4af37; font-weight: bold; font-size: 18px; }
     </style>
 </head>
 <body>
-    <h1>¡Bienvenido a tu FrutiApp!</h1>
-    <p>Pronto aquí verás tus FrutiPuntos</p>
-    <button id="adButton">¡Ver anuncio y ganar FrutiPuntos! 🍓</button>
+    <div class="card">
+        <h1>🍓 FrutiApp</h1>
+        <div class="puntos-box" id="puntos">Puntos: 0</div>
+        
+        <button onclick="sumarPuntos(5)">Reacción (+5)</button>
+        <button onclick="sumarPuntos(10)">5 Mensajes (+10)</button>
+        
+        <button class="btn-saldo" id="checkBalance">Ver Saldo 💰 ahora</button>
+        <div class="ranking" id="ranking">Sigue interactuando para subir de nivel y entrar al Ranking Oro.</div>
+    </div>
 
     <script>
+        let misPuntos = 0;
+        let puedeSumar = true;
         const adController = Adsgram.init({ blockId: "38517" });
 
-        document.getElementById("adButton").addEventListener("click", () => {
-            adController.show().then((result) => {
-                if (result.done) {
-                    alert("¡Felicidades, ganaste tus puntos!");
-                }
-            }).catch((err) => {
-                console.error("El anuncio no se pudo mostrar", err);
-            });
+        function sumarPuntos(cantidad) {
+            if (!puedeSumar) {
+                alert("¡Espera un poco! No hagas spam, espera 30 segundos.");
+                return;
+            }
+            misPuntos += cantidad;
+            document.getElementById("puntos").innerText = "Puntos: " + misPuntos;
+            
+            const rankingDiv = document.getElementById("ranking");
+            if (misPuntos > 80) {
+                rankingDiv.innerHTML = "<span class='oro'>🏆 ¡Ranking Oro alcanzado! Participas en el sorteo.</span>";
+            } else {
+                rankingDiv.innerText = "Sigue interactuando para subir de nivel y entrar al Ranking Oro.";
+            }
+
+            puedeSumar = false;
+            setTimeout(() => { puedeSumar = true; }, 30000);
+        }
+
+        document.getElementById("checkBalance").addEventListener("click", () => {
+            if (misPuntos > 80) {
+                adController.show().then((result) => {
+                    if (result.done) {
+                        misPuntos += 20;
+                        document.getElementById("puntos").innerText = "Puntos: " + misPuntos;
+                        alert("¡Felicidades! Has ganado 20 puntos extra por ver el anuncio. 🍓✨");
+                    }
+                });
+            } else {
+                alert("Tienes " + misPuntos + " puntos. ¡Sigue interactuando para llegar al Ranking Oro (más de 80 puntos)!");
+            }
         });
     </script>
 </body>
 </html>
+
