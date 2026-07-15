@@ -3,13 +3,30 @@
 <head>
     <title>FrutiApp</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://sad.adsgram.ai/js/adsgram.min.js"></script>
     <style>
-        body { text-align: center; font-family: sans-serif; padding-top: 50px; background-color: #fdfdfd; }
+        body { text-align: center; font-family: sans-serif; }
         h1 { color: #ff6b6b; }
+        button { padding: 15px; font-size: 16px; background-color: #ff6b6b; color: white; border: none; border-radius: 10px; }
     </style>
 </head>
 <body>
-    <h1>¡Bienvenida a tu FrutiApp!</h1>
-    <p>Pronto aquí verás tus FrutiPuntos.</p>
+    <h1>¡Bienvenido a tu FrutiApp!</h1>
+    <p>Pronto aquí verás tus FrutiPuntos</p>
+    <button id="adButton">¡Ver anuncio y ganar FrutiPuntos! 🍓</button>
+
+    <script>
+        const adController = Adsgram.init({ blockId: "38517" });
+
+        document.getElementById("adButton").addEventListener("click", () => {
+            adController.show().then((result) => {
+                if (result.done) {
+                    alert("¡Felicidades, ganaste tus puntos!");
+                }
+            }).catch((err) => {
+                console.error("El anuncio no se pudo mostrar", err);
+            });
+        });
+    </script>
 </body>
 </html>
