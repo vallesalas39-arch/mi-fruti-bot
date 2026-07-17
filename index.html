@@ -29,9 +29,14 @@
     </div>
 
     <script>
-        let misPuntos = 0;
+        // 1. CARGAR PUNTOS: Al abrir la app, busca si hay puntos guardados, si no, empieza en 0
+        let misPuntos = parseInt(localStorage.getItem("frutiPuntos")) || 0;
         let puedeSumar = true;
         const adController = Adsgram.init({ blockId: "38517" });
+
+        // Actualizamos la pantalla al iniciar
+        document.getElementById("puntos").innerText = "Puntos: " + misPuntos;
+        actualizarRanking();
 
         function sumarPuntos(cantidad) {
             if (!puedeSumar) {
@@ -39,17 +44,24 @@
                 return;
             }
             misPuntos += cantidad;
-            document.getElementById("puntos").innerText = "Puntos: " + misPuntos;
             
+            // 2. GUARDAR: Cada vez que sumamos, guardamos en el teléfono del usuario
+            localStorage.setItem("frutiPuntos", misPuntos);
+            
+            document.getElementById("puntos").innerText = "Puntos: " + misPuntos;
+            actualizarRanking();
+
+            puedeSumar = false;
+            setTimeout(() => { puedeSumar = true; }, 30000);
+        }
+
+        function actualizarRanking() {
             const rankingDiv = document.getElementById("ranking");
             if (misPuntos > 80) {
                 rankingDiv.innerHTML = "<span class='oro'>🏆 ¡Ranking Oro alcanzado! Participas en el sorteo.</span>";
             } else {
                 rankingDiv.innerText = "Sigue interactuando para subir de nivel y entrar al Ranking Oro.";
             }
-
-            puedeSumar = false;
-            setTimeout(() => { puedeSumar = true; }, 30000);
         }
 
         document.getElementById("checkBalance").addEventListener("click", () => {
@@ -57,6 +69,8 @@
                 adController.show().then((result) => {
                     if (result.done) {
                         misPuntos += 20;
+                        // GUARDAR después de ver el anuncio
+                        localStorage.setItem("frutiPuntos", misPuntos);
                         document.getElementById("puntos").innerText = "Puntos: " + misPuntos;
                         alert("¡Felicidades! Has ganado 20 puntos extra por ver el anuncio. 🍓✨");
                     }
@@ -68,4 +82,3 @@
     </script>
 </body>
 </html>
-
